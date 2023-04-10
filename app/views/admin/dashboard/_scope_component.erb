@@ -1,0 +1,12 @@
+<div class="table-tools">
+  <div class="scopes">
+    <ul class="table_tools_segmented_control scope-default-group">
+      <!--  scope_item = { value: string, link: string }-->
+      <% scope_values.each do |scope_item| %>
+        <li class="scope <%='selected' if scope_item[:value] == selected_value %>">
+          <%= link_to scope_item[:value].capitalize, scope_item[:link], class: 'table_tools_button' %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

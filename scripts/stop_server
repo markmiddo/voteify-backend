@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ $DEPLOYMENT_GROUP_NAME = *"-EnvWebApp"* ]]
+then
+    if lsof -t -i:80 > /dev/null
+        then
+            kill -9 $(lsof -t -i:80)
+        else
+            echo Nothing running on port 80
+    fi
+fi
+
+if [[ $DEPLOYMENT_GROUP_NAME = *"-EnvWorker"* ]]
+then
+    [ -f /home/ec2-user/ruby-on-rails/tmp/sidekiq.pid ] && cat /home/ec2-user/ruby-on-rails/tmp/sidekiq.pid | xargs kill -TERM || echo "No running sidekiq pid found"
+fi

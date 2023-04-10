@@ -1,0 +1,69 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# The following keys must be escaped otherwise they will not be retrieved by
+# the default I18n backend:
+#
+# true, false, on, off, yes, no
+#
+# Instead, surround them with single quotes.
+#
+# en:
+#   'true': 'foo'
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              too_short: 'Oops too short. At least 6 characters please?'
+        event:
+          attributes:
+            fb_pixel:
+              format: 'Please enter your FB Pixel ID, in format: xxxxxxxxxxxx'
+            google_analytic:
+              format: 'Please enter your GOOGLE ANALYTICS ID, in format: UA-xxxx-yy'
+        vote:
+          attributes:
+            patron_id:
+              not_unique_vote: "can't vote for one event several times"
+          logic:
+            vote_is_over: "you can't vote for this event, time is over"
+  active_admin:
+    success:
+      records_destroyed: "Successfully destroyed %{count} records"
+    errors:
+      elements_not_selected: 'Select elements for removing'
+    default_input_values:
+      share_title: 'Your votes are in!'
+      share_description: 'Share on Facebook or Instagram to enter the major prize draw!'
+      top_songs_description: 'Drag and drop in order, with 1 being your favourite. Then hit submit at the bottom of the page.'
+    hints:
+      fb_pixel: 'Paste only FB Pixel ID, e.g. 1234567890987654'
+      google_analytic: 'Paste only GOOGLE ANALYTICS ID, e.g. UA-123456789-0'
+  pundit:
+    default: 'You are not authorized to access this action.'
+    event_policy:
+      can_vote?: 'User has already voted for this event.'
+    user_policy:
+      is_patron?: 'Only patron has access to this action'

@@ -1,0 +1,18 @@
+
+module nginx 1.0;
+
+require {
+	type httpd_t;
+	type user_home_t;
+	type initrc_t;
+	class file { open read };
+	class sock_file write;
+	class unix_stream_socket connectto;
+}
+
+#============= httpd_t ==============
+allow httpd_t initrc_t:unix_stream_socket connectto;
+
+#!!!! This avc can be allowed using the boolean 'httpd_read_user_content'
+allow httpd_t user_home_t:file { open read };
+allow httpd_t user_home_t:sock_file write;

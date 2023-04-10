@@ -1,0 +1,102 @@
+#!/bin/bash
+cd /home/ec2-user/ruby-on-rails
+mkdir -p log
+
+source /etc/profile.d/rvm.sh
+rvm list
+rvm gemset list
+gem list
+
+db_name=$(aws ssm get-parameters --region us-west-2 --names reminisce-db-name  --with-decryption --query Parameters[0].Value)
+db_name=`echo $db_name | sed -e 's/^"//' -e 's/"$//'`
+
+db_user=$(aws ssm get-parameters --region us-west-2 --names reminisce-db-user  --with-decryption --query Parameters[0].Value)
+db_user=`echo $db_user | sed -e 's/^"//' -e 's/"$//'`
+
+db_password=$(aws ssm get-parameters --region us-west-2 --names reminisce-db-password  --with-decryption --query Parameters[0].Value)
+db_password=`echo $db_password | sed -e 's/^"//' -e 's/"$//'`
+
+db_host=$(aws ssm get-parameters --region us-west-2 --names reminisce-db-host  --with-decryption --query Parameters[0].Value)
+db_host=`echo $db_host | sed -e 's/^"//' -e 's/"$//'`
+
+carier_wave_s3_bucket=$(aws ssm get-parameters --region us-west-2 --names reminisce-CarierWaveS3BucketNameSSM  --with-decryption --query Parameters[0].Value)
+carier_wave_s3_bucket=`echo $carier_wave_s3_bucket | sed -e 's/^"//' -e 's/"$//'`
+
+user_access_key=$(aws ssm get-parameters --region us-west-2 --names reminisce-IAMStackUserAccessKeySSM  --with-decryption --query Parameters[0].Value)
+user_access_key=`echo $user_access_key | sed -e 's/^"//' -e 's/"$//'`
+
+user_secret_access_key=$(aws ssm get-parameters --region us-west-2 --names reminisce-IAMStackUserSecretAccessKeySSM  --with-decryption --query Parameters[0].Value)
+user_secret_access_key=`echo $user_secret_access_key | sed -e 's/^"//' -e 's/"$//'`
+
+[ -f .env ] && rm .env || echo .env is not exists yet
+
+smtp_port=587
+smtp_address=smtp.mandrillapp.com
+smtp_username='Reminisce Events'
+smptp_password=0typvBEuxP84a8lAa4GMqQ
+smtp_host=remvote.co
+facebook_api_key=2394784110851766
+facebook_api_secret=1e251998fb5ce947478e6393b96d0fcb
+google_api_key=900646263997-g2abdqufpim5vjvoj68v12vrk3u0mue1.apps.googleusercontent.com
+google_api_secret=sB7xScsOq8b7mCLrITQxEFiQ
+sidekiq_username=reminisce_sidekiq_user
+sidekiq_password=idorEArTIFea
+
+echo DATABASE=$db_name >> .env
+echo DATABASE_USERNAME=$db_user >> .env
+echo DATABASE_PASSWORD=$db_password >> .env
+echo DATABASE_HOST=$db_host >> .env
+echo RAILS_ENV=production >> .env
+echo RAKE_ENV=production >> .env
+echo DEVISE_SECRET=8db1b8d5158b97eb7b54bf002765323c04a5c1be86d34b44548637f6e7a358e160a078390957e5481b069761e8b8c1dcd0489cb0fa2ab302071d878634878161 >> .env
+echo DAEMONIZE_PUMA=true >> .env
+echo PORT=80 >> .env
+
+echo AWS_ACCESS_KEY_ID=$user_access_key >> .env
+echo AWS_SECRET_ACCESS_KEY=$user_secret_access_key >> .env
+echo AWS_DEFAULT_S3_BUCKET=$carier_wave_s3_bucket >> .env
+echo AWS_S3_REGION=us-west-2 >> .env
+
+echo SMTP_ADDRESS=$smtp_address >> .env
+echo SMTP_USERNAME=$smtp_username >> .env
+echo SMTP_PASSWORD=$smptp_password >> .env
+echo SMTP_PORT=$smtp_port >> .env
+echo SMTP_HOST=$smtp_host >> .env
+
+echo FACEBOOK_API_KEY=$facebook_api_key >> .env
+echo FACEBOOK_API_SECRET=$facebook_api_secret >> .env
+
+echo GOOGLE_API_KEY=$google_api_key >> .env
+echo GOOGLE_API_SECRET=$google_api_secret >> .env
+
+echo HOST=api.remvote.co >> .env
+echo FRONTEND_OMNIAUTH_URL=https://remvote.co/omniauth >> .env
+
+echo SIDEKIQ_USERNAME=$sidekiq_username >> .env
+echo SIDEKIQ_PASSWORD=$sidekiq_password >> .env
+
+echo Copy project specific variables to .env
+cat .env.custom >> .env
+
+rvm requirements
+rvm install 2.5.3
+
+curl -sL https://rpm.nodesource.com/setup | bash -
+yum install -y nodejs
+
+gem install bundler -v 1.17.0
+bundle install --without development test
+
+secret_base=55f3df3f5a3d193f8b2506288687efce222822d61b13cd51a3ae20ff111e44cf6850a43bab1ee3eb5afdc81be4975a3ecba553d185092e13d46a23d76792d6af
+echo SECRET_KEY_BASE=$secret_base >> .env
+export SECRET_KEY_BASE=$$secret_base
+
+youtube_api_key=AIzaSyC-NpEvR1JJTS6CHNo5HAj2olIykOvbR-w
+if [[ $DEPLOYMENT_GROUP_NAME = *"-EnvWebApp"* ]]
+then
+  youtube_api_key=AIzaSyBFjvir140CsCkb9HCsY7zQvH7C_y_puyQ
+fi
+
+export YOUTUBE_API_KEY=$youtube_api_key
+echo YOUTUBE_API_KEY=$youtube_api_key >> .env
+

@@ -1,0 +1,30 @@
+version: '2.1'
+
+services:
+
+  postgres_db:
+    image: postgres:alpine
+    container_name: reminisce_db
+    ports:
+      - $DB_PORT:5432
+    restart: always
+    environment:
+      POSTGRES_DB: $DATABASE
+      POSTGRES_USER: $DATABASE_USERNAME
+      POSTGRES_PASSWORD: $DATABASE_PASSWORD
+    healthcheck:
+      test: "exit 0"
+    networks:
+      - default
+
+  redis:
+    image: bitnami/redis:latest
+    container_name: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - $REDIS_PORT:6379
+
+networks:
+  default:
+    driver: bridge

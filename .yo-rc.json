@@ -1,0 +1,10 @@
+{
+  "generator-agonb": {
+    "repository_url": "git@github.com:brocoders/reminisce-backend-app.git",
+    "project_destination_path": "reminisce-backend-app",
+    "application_name": "reminisce",
+    "project_technology": "rubyonrails",
+    "use_worker": true,
+    "database_type": "postgresql"
+  }
+}

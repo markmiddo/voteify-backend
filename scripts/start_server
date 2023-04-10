@@ -1,0 +1,29 @@
+#!/bin/bash
+
+source /etc/profile.d/rvm.sh
+cd /home/ec2-user/ruby-on-rails
+
+if [[ $DEPLOYMENT_GROUP_NAME = *"-EnvWebApp"* ]]
+then
+    if [[ true = true ]]
+    then
+        worker_ip=172.31.54.22
+        export REDIS_URL=redis://$worker_ip\:6379/1
+        echo REDIS_URL=redis://$worker_ip\:6379/1 >> .env
+    fi
+
+    bundle exec puma -C config/puma_production.rb
+fi
+
+if [[ $DEPLOYMENT_GROUP_NAME = *"-EnvWorker"* ]]
+then
+    # ensure redis is run as deamon
+    export REDIS_URL=redis://localhost:6379/1
+    echo REDIS_URL=redis://localhost:6379/1 >> .env
+
+    sed -i -- '0,/daemonize no/s/daemonize no/daemonize yes/' /etc/redis.conf
+    # Start redis
+    redis-server /etc/redis.conf
+    # start sidekiq -t 60 - time pause for stop process
+    bundle exec sidekiq -d -L log/sidekiq.log -C config/sidekiq.yml -P tmp/sidekiq.pid -e production -t 60
+fi

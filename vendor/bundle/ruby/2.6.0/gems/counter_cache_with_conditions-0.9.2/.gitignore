@@ -1,0 +1,8 @@
+*.gem
+.DS_Store
+/.bundle
+/Gemfile.lock
+/tmp
+/test/debug.log
+/.ruby-gemset
+/.ruby-version
