@@ -1,6 +1,6 @@
 ActiveAdmin.setup do |config|
 
-  config.site_title = 'Reminisce'
+  config.site_title = 'Voteify'
 
   config.authentication_method =  :authenticate_admin!
 

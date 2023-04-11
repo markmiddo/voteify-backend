@@ -10,7 +10,7 @@ class BasicSharingImageDrawer
   }
 
   SUB_TITLE= 'I voted for'
-  TITLE = "Reminisce #{Date.today.year}"
+  TITLE = "Voteify #{Date.today.year}"
   TRACK_NAME_MAX_LENGTH = 40
   TRACK_LINE_SPACING_INTERVAL = 25
   TRACK_FONT_NAME = REGISTERED_FONTS[:roboto_regular]
