@@ -13,8 +13,8 @@ threads threads_count, threads_count
 #
 environment ENV.fetch('RAILS_ENV') { 'production' }
 daemonize   ENV.fetch('DAEMONIZE_PUMA') { false }
-bind 'unix:///home/rmnsc/app/tmp/puma.sock'
-stdout_redirect '/home/rmnsc/app/log/access.log', '/home/rmnsc/app/log/error.log', true
+bind 'unix:///root/voteify-backend/tmp/puma.sock'
+stdout_redirect '/root/logs/access.log', '/root/logs/error.log', true
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together
 # the concurrency of the application would be max `threads` * `workers`.
